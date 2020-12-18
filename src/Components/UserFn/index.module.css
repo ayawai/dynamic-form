@@ -1,0 +1,10 @@
+.header_right {
+  text-align: right;
+}
+.header_right .username {
+  color: #fff;
+  margin-left: 10px;
+}
+.user_dropdown {
+  display: inline-block;
+}

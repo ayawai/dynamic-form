@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState, useRef, useCallback} from 'react';
-import { Table, Space, Button, Form, Input, Select, InputNumber, Checkbox, message } from 'antd';
+import { Table, Space, Button, Form, Input, Select, Row, Col, Checkbox, message } from 'antd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider, useDrag, useDrop, createDndContext } from 'react-dnd';
 import updateImmutability from 'immutability-helper';
@@ -50,6 +50,7 @@ const Editable: FC = function() {
   const [form] = Form.useForm();
   const [lists, setLists] = useState([]);
   const [update, setUpdate] = useState(false);
+  const [business, setBusiness] = useState([]);
   const [controlerType, setControlerType] = useState("");
   const [controlerName, setControlerName] = useState("");
   const [controlerPlaceholder, setControlerPlaceholder] = useState("");
@@ -62,6 +63,14 @@ const Editable: FC = function() {
       }
     });
   }, [update]);
+
+  useEffect(function() {
+    proxyRequest.get(baseUrl + `/business`, {}).then(function(res: any) {
+      if (res) {
+        setBusiness(res.data)
+      }
+    });
+  }, [])
 
   const columns = [
     {
@@ -115,8 +124,8 @@ const Editable: FC = function() {
   }
 
   const formItemLayout = {
-    labelCol: { span: 2 },
-    wrapperCol: { span: 6 },
+    labelCol: { span: 6 },
+    wrapperCol: { span: 18 },
   };
   const tailFormItemLayout = {
     wrapperCol: {
@@ -153,6 +162,10 @@ const Editable: FC = function() {
       }
     });
   };
+
+  const handleChange = (e:any) => {
+   
+  }
 
   const changeSelect = (value: string, option: any) => {
     setControlerType(value)
@@ -205,73 +218,99 @@ const Editable: FC = function() {
         onFinish={onFinish}
         form={form}
       >
-        <Form.Item label="业务">
-          <span className="ant-form-text">业务1</span>
-        </Form.Item>
-        <Form.Item 
-          label="字段标签"
-        >
-          <Form.Item name="name" noStyle>
-            <Input value={controlerName} placeholder="请输入字段标签" />
-          </Form.Item>
-        </Form.Item>
-        <Form.Item 
-          name="field"
-          label="字段"
-          hasFeedback
-          rules={[{required: true, message: "请输入字段"}]}
-        >
-          <Input placeholder="请输入字段" />
-        </Form.Item>
-        <Form.Item 
-          label="占位提示"
-        >
-          <Form.Item name="placeholder" noStyle>
-            <Input value={controlerPlaceholder} placeholder="请输入占位提示" />
-          </Form.Item>
-        </Form.Item>
-        <Form.Item 
-          label="默认值"
-        >
-          <Form.Item name="defaultValue" noStyle>
-            <Input value={controlerDefaultValue} placeholder="请输入默认值" />
-          </Form.Item>
-        </Form.Item>
-        <Form.Item
-          name="select"
-          label="表单控件"
-          hasFeedback
-          rules={[{ required: true, message: '请选择控件类型!' }]}
-        >
-          <Select onChange={changeSelect} placeholder="请选择控件类型">
-            <Option value="3">数字</Option>
-            <Option value="1">文本</Option>
-            <Option value="2">下拉选择</Option>
-            <Option value="4">单选按钮</Option>
-          </Select>
-        </Form.Item>
-        {
-          ["2", "4"].includes(controlerType)
-          ? <Form.Item 
-              label="控件选项"
+        <Row>
+          <Col span={8}>
+            <Form.Item label="业务">
+              <Select onChange={handleChange} placeholder="请选择业务">
+                {
+                  business.map((item: any) => {
+                    return <Option key={item.id} value={item.key}>{item.name}</Option>
+                  })
+                }
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item 
+              label="字段标签"
             >
-              <Form.Item 
-                name="options"
-                noStyle
-                hasFeedback
-                rules={[{ required: true, message: '请输入选项' }]}
-              >
-                <Input placeholder="输入选项并用'/'隔开" />
-                {/* <Input addonAfter={<PlusOutlined />} placeholder="输入选项并用'/'隔开" /> */}
+              <Form.Item name="name" noStyle>
+                <Input value={controlerName} placeholder="请输入字段标签" />
               </Form.Item>
             </Form.Item>
-          : null
-        }
-        <Form.Item {...tailFormItemLayout} name="required" valuePropName="checked">
-          <Checkbox>
-            是否必填
-          </Checkbox>
-        </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item 
+              name="field"
+              label="字段"
+              hasFeedback
+              rules={[{required: true, message: "请输入字段"}]}
+            >
+              <Input placeholder="请输入字段" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item 
+              label="占位提示"
+            >
+              <Form.Item name="placeholder" noStyle>
+                <Input value={controlerPlaceholder} placeholder="请输入占位提示" />
+              </Form.Item>
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item 
+              label="默认值"
+            >
+              <Form.Item name="defaultValue" noStyle>
+                <Input value={controlerDefaultValue} placeholder="请输入默认值" />
+              </Form.Item>
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="select"
+              label="表单控件"
+              hasFeedback
+              rules={[{ required: true, message: '请选择控件类型!' }]}
+            >
+              <Select onChange={changeSelect} placeholder="请选择控件类型">
+                <Option value="3">数字</Option>
+                <Option value="1">文本</Option>
+                <Option value="2">下拉选择</Option>
+                <Option value="4">单选按钮</Option>
+              </Select>
+            </Form.Item>  
+          </Col>
+          {
+            ["2", "4"].includes(controlerType)
+            ? (
+              <Col span={8}>
+                <Form.Item 
+                  label="控件选项"
+                >
+                  <Form.Item 
+                    name="options"
+                    noStyle
+                    hasFeedback
+                    rules={[{ required: true, message: '请输入选项' }]}
+                  >
+                    <Input placeholder="输入选项并用'/'隔开" />
+                    {/* <Input addonAfter={<PlusOutlined />} placeholder="输入选项并用'/'隔开" /> */}
+                  </Form.Item>
+                </Form.Item>
+              </Col>
+            )
+            : null
+          }
+          <Col span={8}>
+            <Form.Item {...tailFormItemLayout} name="required" valuePropName="checked">
+              <Checkbox>
+                是否必填
+              </Checkbox>
+            </Form.Item>
+          </Col>
+        </Row>
         <Form.Item>
           <Button type="primary" htmlType="submit">新增</Button>
         </Form.Item>
