@@ -14,7 +14,8 @@ import {
 } from 'antd';
 import { baseUrl } from '../../utils/baseServer';
 import proxyRequest from '../../utils/request';
-import history from 'history/browser';
+import { useHistory } from 'react-router-dom';
+import Layouts from '../../Layout'
 
 const { Option } = Select;
 
@@ -23,7 +24,8 @@ interface listsPageProps {
   switchTab: any;
 }
 
-const ListsPage: FC<listsPageProps> = function(prop) {
+const ListsPage: FC = function(prop) {
+  const history = useHistory();
   const [form] = Form.useForm();
   const [business, setBusiness] = useState([]);
   const [formList, setFormList] = useState([]);
@@ -68,13 +70,11 @@ const ListsPage: FC<listsPageProps> = function(prop) {
   };
 
   const handleAllocation = (record: any) => {
-    history.push('/?formId='+ record.id)
-    prop.switchTab("2")
+    history.push('/allocation?formId='+ record.id)
   }
 
   const handleInput = (record: any) => {
-    history.push('/?formId='+ record.id);
-    prop.switchTab("3")
+    history.push('/view?formId='+ record.id)
   }
 
   const handleEditRow = (val: any) => {
@@ -198,17 +198,80 @@ const ListsPage: FC<listsPageProps> = function(prop) {
 
   return (
     <React.Fragment>
-      <div style={{background: "#fff", padding: 15, marginBottom: 20}}>
-        <Form
-          form={form}
-          name="advanced_search"
-          className="ant-advanced-search-form"
-          onFinish={onFinish}
-        >
-          <Row gutter={24}>
-            <Col span={8}>
-              <Form.Item label="按业务">
-                <Select style={{ width: 120, marginBottom: 12 }} onChange={handleChange} placeholder="请选择业务">
+      <Layouts>
+        <div style={{background: "#fff", padding: 15, marginBottom: 20}}>
+          <Form
+            form={form}
+            name="advanced_search"
+            className="ant-advanced-search-form"
+            onFinish={onFinish}
+          >
+            <Row gutter={24}>
+              <Col span={8}>
+                <Form.Item label="按业务">
+                  <Select style={{ width: 120, marginBottom: 12 }} onChange={handleChange} placeholder="请选择业务">
+                    {
+                      business.map((item: any) => {
+                        return <Option key={item.id} value={item.key}>{item.name}</Option>
+                      })
+                    }
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={24} style={{ textAlign: 'right' }}>
+                <Button type="primary" htmlType="submit">
+                  Search
+                </Button>
+                <Button
+                  style={{ margin: '0 8px' }}
+                  onClick={() => {
+                    // form.resetFields();
+                  }}
+                >
+                  Clear
+                </Button>
+                {/* <a
+                  style={{ fontSize: 12 }}
+                  onClick={() => {
+                    setExpand(!expand);
+                  }}
+                >
+                  {expand ? <UpOutlined /> : <DownOutlined />} Collapse
+                </a> */}
+              </Col>
+            </Row>
+          </Form>
+        </div>
+        <div style={{padding: 15, background: "#fff"}}>
+          <Button style={{marginBottom: 12}} onClick={addForm} type="primary">新建</Button>
+          <Modal 
+            title="新增表单"
+            visible={isModalVisible}
+            onOk={handleOk} 
+            onCancel={handleCancel}
+            footer={[
+              <Button key="back" onClick={handleCancel}>
+                取消
+              </Button>,
+              <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
+                新增
+              </Button>,
+            ]}  
+          >
+            <Form
+              name="validate_other"
+              {...formItemLayout}
+              onFinish={onFinish}
+              form={form}
+            >
+              <Form.Item 
+                label="所属业务"
+                name="business"
+                rules={[{ required: true, message: '请选择所属业务!' }]}
+              >
+                <Select onChange={selectBusinessForAdd} placeholder="请选择业务">
                   {
                     business.map((item: any) => {
                       return <Option key={item.id} value={item.key}>{item.name}</Option>
@@ -216,82 +279,21 @@ const ListsPage: FC<listsPageProps> = function(prop) {
                   }
                 </Select>
               </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={24} style={{ textAlign: 'right' }}>
-              <Button type="primary" htmlType="submit">
-                Search
-              </Button>
-              <Button
-                style={{ margin: '0 8px' }}
-                onClick={() => {
-                  // form.resetFields();
-                }}
-              >
-                Clear
-              </Button>
-              {/* <a
-                style={{ fontSize: 12 }}
-                onClick={() => {
-                  setExpand(!expand);
-                }}
-              >
-                {expand ? <UpOutlined /> : <DownOutlined />} Collapse
-              </a> */}
-            </Col>
-          </Row>
-        </Form>
-      </div>
-      <div style={{padding: 15, background: "#fff"}}>
-        <Button style={{marginBottom: 12}} onClick={addForm} type="primary">新建</Button>
-        <Modal 
-          title="新增表单"
-          visible={isModalVisible}
-          onOk={handleOk} 
-          onCancel={handleCancel}
-          footer={[
-            <Button key="back" onClick={handleCancel}>
-              取消
-            </Button>,
-            <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
-              新增
-            </Button>,
-          ]}  
-        >
-          <Form
-            name="validate_other"
-            {...formItemLayout}
-            onFinish={onFinish}
-            form={form}
-          >
-            <Form.Item 
-              label="所属业务"
-              name="business"
-              rules={[{ required: true, message: '请选择所属业务!' }]}
-            >
-              <Select onChange={selectBusinessForAdd} placeholder="请选择业务">
-                {
-                  business.map((item: any) => {
-                    return <Option key={item.id} value={item.key}>{item.name}</Option>
-                  })
-                }
-              </Select>
-            </Form.Item>
-            <Form.Item label="表单名" name="name" rules={[{ required: true }]}>
-              <Input placeholder="请输入表单名" />
-            </Form.Item>
-          </Form>
-        </Modal>
-        <Table 
-          rowKey={e => e.id}
-          columns={columns}
-          dataSource={formList}
-          size="small"
-          bordered
-        />
-      </div>
-    </React.Fragment>
+              <Form.Item label="表单名" name="name" rules={[{ required: true }]}>
+                <Input placeholder="请输入表单名" />
+              </Form.Item>
+            </Form>
+          </Modal>
+          <Table 
+            rowKey={e => e.id}
+            columns={columns}
+            dataSource={formList}
+            size="small"
+            bordered
+          />
+        </div>
+      </Layouts>
+      </React.Fragment>
   )
 }
 

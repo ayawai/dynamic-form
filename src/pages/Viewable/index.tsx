@@ -14,13 +14,15 @@ import {
 } from 'antd';
 import { baseUrl } from '../../utils/baseServer';
 import proxyRequest from '../../utils/request';
-import history from 'history/browser';
+import { useLocation } from 'react-router-dom';
+import Layouts from '../../Layout'
 import {v4 as uuidv4} from 'uuid';
 
 const { Option } = Select;
 
 const Viewable: FC = function() {
 
+  let location = useLocation();
   let [lists, setLists] = useState([]);
   let [dataSource, setDataSource] = useState([]);
   let [formInfo, setFormInfo] = useState({name: ""});
@@ -39,18 +41,12 @@ const Viewable: FC = function() {
   // }, [formId])
 
   useEffect(() => {
-    const {search = ""} = history.location;
+    const query = new URLSearchParams(location.search);
+    const fId = query.get("formId")
     let pa = JSON.parse(JSON.stringify(listParams));
-    if (search) {
-      const q1 = search.split("?");
-      if (q1.length > 1) {
-        // TODO: 支持一个参数formId
-        const q2 = q1[1].split("=");
-        if (q2.length > 1) {
-          pa.formId = q2[1];
-          setFormId(q2[1])
-        }
-      }
+    if (fId) {
+      pa.formId = fId;
+      setFormId(fId)
     }
 
     if (formId) {
@@ -168,7 +164,7 @@ const Viewable: FC = function() {
   })
 
   return (
-    <div>
+    <Layouts>
       <div style={{background: "#fff", padding: "12px 15px", marginBottom: 20}}>
         <Form
           name="validate_other"
@@ -283,7 +279,7 @@ const Viewable: FC = function() {
           bordered
         />
       </div>
-    </div>
+    </Layouts>
   )
 }
 
