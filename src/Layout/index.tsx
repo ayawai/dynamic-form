@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import { Layout, Menu, Row, Col } from 'antd';
 import './index.css';
 import '../App.css';
@@ -6,7 +6,7 @@ import Viewable from '../Components/Viewable';
 import ListsPage from '../Components/ListsPage';
 import Allocation from '../Components/Allocation';
 import UserFn from '../Components/UserFn';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   UserOutlined,
   VideoCameraOutlined,
@@ -39,13 +39,18 @@ function ContentComponent({contentCode, switchTab}: ContentComponentProps) {
 
 const AYDemo: FC = (props) => {
   const {children} = props;
-  const [menu, setMenu] = useState(['1']);
+  const location = useLocation();
+  const [menu, setMenu] = useState(['/']);
 
   function selectMenu(arg: any) {
     const { keyPath } = arg;
     // setMenu(() => keyPath)
 
   }
+  
+  useEffect(function() {
+    setMenu([location.pathname])
+  }, [location])
 
   return (
     <Layout className="home_page">
@@ -53,14 +58,14 @@ const AYDemo: FC = (props) => {
         <Row>
           <Col flex={4} style={{display: "flex"}}>
             <div className="logo">冶控填报平台</div>
-            <Menu theme="dark" mode="horizontal" onClick={selectMenu} selectedKeys={menu} defaultSelectedKeys={['1']}>
-              <Menu.Item key="1" icon={<VideoCameraOutlined />}>
+            <Menu theme="dark" mode="horizontal" onClick={selectMenu} selectedKeys={menu}>
+              <Menu.Item key="/" icon={<VideoCameraOutlined />}>
                 <Link to='/'>列表页</Link>
               </Menu.Item>
-              <Menu.Item key="2" icon={<UserOutlined />}>
+              <Menu.Item key="/allocation" icon={<UserOutlined />}>
                 <Link to='/allocation'>配置页</Link>
               </Menu.Item>
-              <Menu.Item key="3" icon={<UserOutlined />}>
+              <Menu.Item key="/view" icon={<UserOutlined />}>
                 <Link to='/view'>填报页</Link>
               </Menu.Item>
             </Menu>

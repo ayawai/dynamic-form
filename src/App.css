@@ -1,6 +1,6 @@
 @import '~antd/dist/antd.css';
 #root {
-  min-height: 100vh;
+  height: 100%;
 }
 .App {
   height: 100vh;

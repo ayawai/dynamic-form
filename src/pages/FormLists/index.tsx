@@ -222,7 +222,7 @@ const ListsPage: FC = function(prop) {
             <Row>
               <Col span={24} style={{ textAlign: 'right' }}>
                 <Button type="primary" htmlType="submit">
-                  Search
+                  查询
                 </Button>
                 <Button
                   style={{ margin: '0 8px' }}
@@ -230,7 +230,7 @@ const ListsPage: FC = function(prop) {
                     // form.resetFields();
                   }}
                 >
-                  Clear
+                  重置
                 </Button>
                 {/* <a
                   style={{ fontSize: 12 }}
