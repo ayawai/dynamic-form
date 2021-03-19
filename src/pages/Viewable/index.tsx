@@ -61,7 +61,7 @@ const Viewable: FC = function() {
       })
       .then(() => {
         proxyRequest.get(baseUrl + `/getFormData`, {id: formId}).then(function(res: any) {
-          let tempArr = [], newArr: any = [];
+          let tempArr: string[] = [], newArr: any = [];
           if (res) {
             
             for (let i = 0; i < res.data.length; i++) {
@@ -179,7 +179,7 @@ const Viewable: FC = function() {
                     options = item.options.split("/");
                   }
                   // 
-                  let rules = [];
+                  let rules: any[] = [];
                   if (item.isRequired === '1') {
                     rules.push({
                       required: true, 

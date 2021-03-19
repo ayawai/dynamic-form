@@ -1,5 +1,5 @@
 .header_right {
-  text-align: right;
+  float: right;
 }
 .header_right .username {
   color: #fff;

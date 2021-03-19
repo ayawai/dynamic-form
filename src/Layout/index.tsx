@@ -10,39 +10,20 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   UserOutlined,
   VideoCameraOutlined,
+  UploadOutlined,
+  MenuUnfoldOutlined,
+  MenuFoldOutlined
 } from '@ant-design/icons';
 
-const { Header, Content, Footer } = Layout;
-
-
-interface ContentComponentProps {
-  contentCode: string;
-  switchTab: any;
-}
-
-function ContentComponent({contentCode, switchTab}: ContentComponentProps) {
-  if (contentCode === "1") {
-    return (
-      <ListsPage contentCode={contentCode} switchTab={switchTab} />
-    )
-  } else if (contentCode === "2") {
-    return (
-      <Allocation />
-    )
-  } else if (contentCode === "3") {
-    return (
-      <Viewable />
-    )
-  }
-  return null
-}
+const { Header, Content, Footer, Sider } = Layout;
 
 const AYDemo: FC = (props) => {
   const {children} = props;
   const location = useLocation();
   const [menu, setMenu] = useState(['/']);
+  const [collapsed, setCollapsed] = useState(true);
 
-  function selectMenu(arg: any) {
+  function selectMenu(arg:any) {
     const { keyPath } = arg;
     // setMenu(() => keyPath)
 
@@ -54,7 +35,46 @@ const AYDemo: FC = (props) => {
 
   return (
     <Layout className="home_page">
-      <Header className="header">
+      <Sider trigger={null} collapsible collapsed={collapsed}>
+        <div className="logo">
+          { collapsed ? "F" : "冶控填报平台" }
+        </div>
+        <Menu theme="dark" mode="horizontal" onClick={selectMenu} selectedKeys={menu}>
+          <Menu.Item key="/" icon={<VideoCameraOutlined />}>
+            <Link to='/'>列表页</Link>
+          </Menu.Item>
+          <Menu.Item key="/allocation" icon={<UserOutlined />}>
+            <Link to='/allocation'>配置页</Link>
+          </Menu.Item>
+          <Menu.Item key="/view" icon={<UserOutlined />}>
+            <Link to='/view'>填报页</Link>
+          </Menu.Item>
+          <Menu.Item key="/user" icon={<UserOutlined />}>
+            <Link to='/user'>用户角色</Link>
+          </Menu.Item>
+        </Menu>
+      </Sider>
+      <Layout className="site-layout">
+        <Header className="site-layout-background" style={{ padding: 0 }}>
+          {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+            className: 'trigger',
+            onClick: () => setCollapsed(!collapsed),
+          })}
+          <UserFn />
+        </Header>
+        <Content
+          className="site-layout-background"
+          style={{
+            margin: '24px 16px',
+            padding: 24,
+            minHeight: 280,
+          }}
+        >
+          {children}
+        </Content>
+      </Layout>
+      
+      {/* <Header className="header">
         <Row>
           <Col flex={4} style={{display: "flex"}}>
             <div className="logo">冶控填报平台</div>
@@ -67,6 +87,9 @@ const AYDemo: FC = (props) => {
               </Menu.Item>
               <Menu.Item key="/view" icon={<UserOutlined />}>
                 <Link to='/view'>填报页</Link>
+              </Menu.Item>
+              <Menu.Item key="/user" icon={<UserOutlined />}>
+                <Link to='/user'>用户角色</Link>
               </Menu.Item>
             </Menu>
           </Col>
@@ -85,8 +108,8 @@ const AYDemo: FC = (props) => {
       >
         {children}
       </Content>
-      <Footer style={{ textAlign: 'center' }}> ©2020 Created by MG</Footer>
-      </Layout>
+      <Footer style={{ textAlign: 'center' }}> ©2020 Created by MG</Footer> */}
+    </Layout>
   )
 }
 
